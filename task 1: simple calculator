@@ -1,0 +1,77 @@
+// task 1:-simple calculator using arithmatic expressions
+//
+
+#include <iostream>
+#include <cmath>
+using namespace std;
+float add(float,float);
+float sub(float,float);
+float mul(float,float);
+float div(float,float);
+int main()
+{
+    float n1 = 0.0,n2=0.0,conc;// intializing two numbers
+    int choice;
+    cout<<"enter your choice";// enter choice for a expression to be executed
+    cin>>choice;
+    do
+    {
+        cout<<"\t1.addition"<<endl;
+        cout<<"\t2.subtraction"<<endl;
+        cout<<"\t3.multiplication"<<endl;
+        cout<<"\t4.division"<<endl;
+        cout<<"\t5.exit"<<endl;
+        if (choice>=1&&choice<=4)
+        {
+            cout<<"enter first number :"<<endl;
+            cout<<"enter second number :"<<endl;
+            cin>>n1>>n2;
+        }
+        switch(choice)
+        {
+            case 1:
+                conc=add(n1,n2);
+                cout<<"\tCONCLUSION =  "<<conc<<endl;
+                
+                break;
+            case 2:
+                conc=sub(n1,n2);
+                cout<<"\tCONCLUSION =  "<<conc<<endl;
+                
+                break;
+            case 3:
+                conc=mul(n1,n2);
+                cout<<"\tCONCLUSION =  "<<conc<<endl;
+                
+                break;
+            case 4:
+                conc=div(n1,n2);
+                cout<<"\tCONCLUSION =  "<<conc<<endl;
+                
+                break;
+            default:
+                cout<<"\tINVALID CHOICE"<<endl;
+                
+                break;
+        }
+    }while(choice!=5);
+    cout<<endl;
+    return 0;
+}
+float add(float x,float y)
+{
+    return (x+y);
+}
+float sub(float x,float y)
+{
+    return (x-y);
+}
+float mul(float x,float y)
+{
+    return (x*y);
+}
+float div(float x,float y)
+{
+    return(x/y);
+}
+
