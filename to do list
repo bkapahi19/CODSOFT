@@ -1,0 +1,259 @@
+//
+//  main.cpp
+//  codsoft task 4
+// to do list
+
+
+#include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
+
+struct Todo {
+    int id;
+    string task;
+};
+
+// Function to get the next available ID
+int get_NextID()
+{
+    cout<<"\n\n\n*********************************************************************************************\n\n\n"<<endl;
+    cout<<"\t*                                                                                       *    \t"<<endl;
+    cout<<"\n\n\n                                 WELCOME TO DO LIST                                     \n\n\n"<<endl;
+    cout<<"\t*                                                                                       *    \t"<<endl;
+    cout<<"\n\n\n*********************************************************************************************\n\n\n"<<endl;
+    ifstream read;
+    read.open("id.txt");
+    int id;
+    if (!read.fail()) {
+        read >> id;
+    } else {
+        id = 1; //initialize with ID 1
+    }
+    read.close();
+    return id;
+}
+
+// Function to update the new available ID
+void update_NextID(int id)
+{
+    cout<<"\n\n\n*********************************************************************************************\n\n\n"<<endl;
+    cout<<"\t*                                                                                           *  \t"<<endl;
+    cout<<"\n\n\n                                 WELCOME TO DO LIST                                     \n\n\n"<<endl;
+    cout<<"\t*                                                                                           *  \t"<<endl;
+    cout<<"\n\n\n*********************************************************************************************\n\n\n"<<endl;
+    ofstream write;
+    write.open("id.txt");
+    write << id;
+    write.close();
+}
+
+void add_Todo()
+{
+    cout<<"\n\n\n****************************************************************************************\n\n\n"<<endl;
+    cout<<"\t*                                                                                           *  \t"<<endl;
+    cout<<"\n\n\n                                 WELCOME TO DO LIST                                     \n\n\n"<<endl;
+    cout<<"\t*                                                                                           *  \t"<<endl;
+    cout<<"\n\n\n****************************************************************************************\n\n\n"<<endl;
+    cout << "Enter a new task to do: ";
+    string task;
+    cin.ignore();
+    getline(cin, task);
+    int id = get_NextID();
+    Todo newTask = {id, task};
+    update_NextID(id + 1); // Update the new available ID
+    ofstream write;
+    write.open("todo.txt", ios::app);
+    write << newTask.id << endl;
+    write << newTask.task << endl;
+    write.close();
+    cout << "Task has been added successfully." << endl;
+}
+
+void print(const Todo &task)
+{
+    cout << "ID: " << task.id << ", Task: " << task.task << endl;
+}
+
+void readData()
+{
+    cout<<"\n\n\n*********************************************************************************************\n\n\n"<<endl;
+    cout<<"  \t  *                                                                                        *  \t"<<endl;
+    cout<<"\n\n\n                                 WELCOME TO DO LIST                                     \n\n\n"<<endl;
+    cout<<"\t    *                                                                                        *  \t"<<endl;
+    cout<<"\n\n\n*********************************************************************************************\n\n\n"<<endl;
+    ifstream read;
+    read.open("todo.txt");
+    if (!read) {
+        cout << "Error opening the file." << endl;
+        return;
+    }
+    cout << "Your current task list:" << endl;
+    Todo task;
+    while (read >> task.id) {
+        read.ignore();
+        getline(read, task.task);
+        print(task);
+    }
+    read.close();
+}
+
+int search_Task()
+{
+    cout<<"\n\n\n*********************************************************************************************\n\n\n"<<endl;
+    cout<<"  \t   *                                                                                        *  \t"<<endl;
+    cout<<"\n\n\n                                 WELCOME TO DO LIST                                     \n\n\n"<<endl;
+    cout<<"  \t   *                                                                                        *  \t"<<endl;
+    cout<<"\n\n\n*********************************************************************************************\n\n\n"<<endl;
+    int id;
+    cout << "Enter the task ID to be searched: ";
+    cin >> id;
+    ifstream read;
+    read.open("todo.txt");
+    if (!read) {
+        cout << "Error opening the file." << endl;
+        return -1;
+    }
+    Todo task;
+    bool found = false;
+    while (read >> task.id) {
+        read.ignore();
+        getline(read, task.task);
+        if (task.id == id) {
+            print(task);
+            found = true;
+            break;
+        }
+    }
+    read.close();
+    if (!found) {
+        cout << "Task with ID " << id << " not found." << endl;
+    }
+    return id;
+}
+
+void delete_Task()
+{
+    cout<<"\n\n\n*********************************************************************************************\n\n\n"<<endl;
+    cout<<"  \t *                                                                                      *  \t"<<endl;
+    cout<<"\n\n\n                                 WELCOME TO DO LIST                                     \n\n\n"<<endl;
+    cout<<"  \t *                                                                                      *  \t"<<endl;
+    cout<<"\n\n\n*********************************************************************************************\n\n\n"<<endl;
+    
+    int id = search_Task();
+    if (id == -1) {
+        return;
+    }
+    cout << "Enter 'y' to delete this task: ";
+    char option;
+    cin >> option;
+    if (option == 'y' || option == 'Y') {
+        Todo task;
+        ofstream tempfile;
+        tempfile.open("temp.txt");
+        ifstream read;
+        read.open("todo.txt");
+        while (read >> task.id) {
+            read.ignore();
+            getline(read, task.task);
+            if (task.id != id) {
+                tempfile << task.id << endl;
+                tempfile << task.task << endl;
+            }
+        }
+        read.close();
+        tempfile.close();
+        remove("todo.txt");
+        rename("temp.txt", "todo.txt");
+        cout << "Task has been successfully deleted." << endl;
+    } else {
+        cout << "Task deletion cancelled." << endl;
+    }
+}
+
+void update_Task()
+{
+    cout<<"\n\n\n*********************************************************************************************\n\n\n"<<endl;
+    cout<<"  \t *                                                                                      * \t"<<endl;
+    cout<<"\n\n\n                                 WELCOME TO DO LIST                                     \n\n\n"<<endl;
+    cout<<"  \t *                                                                                      * \t"<<endl;
+    cout<<"\n\n\n*********************************************************************************************\n\n\n"<<endl;
+    int id = search_Task();
+    if (id == -1) {
+        return;
+    }
+    cout << "Do you want to update this task? (Enter 'y' for yes): ";
+    char option;
+    cin >> option;
+    if (option == 'y' || option == 'Y') {
+        Todo newTask;
+        cout << "Enter the updated task: ";
+        cin.ignore();
+        getline(cin, newTask.task);
+        Todo task;
+        ofstream tempfile;
+        tempfile.open("temp.txt");
+        ifstream read;
+        read.open("todo.txt");
+        while (read >> task.id) {
+            read.ignore();
+            getline(read, task.task);
+            if (task.id != id) {
+                tempfile << task.id << endl;
+                tempfile << task.task << endl;
+            } else {
+                tempfile << id << endl;
+                tempfile << newTask.task << endl;
+            }
+        }
+        read.close();
+        tempfile.close();
+        remove("todo.txt");
+        rename("temp.txt", "todo.txt");
+        cout << "Task has been successfully updated." << endl;
+    } else {
+        cout << "Task update cancelled." << endl;
+    }
+}
+
+int main()
+{
+    cout<<" \n\n\n***************************************************************************************************\n\n\n"<<endl;
+    cout<<"  \t  *                                                                                      *  \t"<<endl;
+    cout<<"\n\n\n                                 WELCOME TO DO LIST                                     \n\n\n"<<endl;
+    cout<<"  \t  *                                                                                      *  \t"<<endl;
+    cout<<" \n\n\n**************************************************************************************************\n\n\n"<<endl;
+    while (true) {
+        cout << "\n1. Add your task :" << endl;
+        cout << "2. View your tasks:" << endl;
+        cout << "3. Search for your task:" << endl;
+        cout << "4. Delete your task:" << endl;
+        cout << "5. Update your task:" << endl;
+        cout << "6. Exit" << endl;
+        int choice;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        switch (choice) {
+            case 1:
+                add_Todo();
+                break;
+            case 2:
+                readData();
+                break;
+            case 3:
+                search_Task();
+                break;
+            case 4:
+                delete_Task();
+                break;
+            case 5:
+                update_Task();
+                break;
+            case 6:
+                cout << "see you later!" << endl;
+                return 0;
+            default:
+                cout << "Invalid choice!! Try again:" << endl;
+        }
+    }
+}
